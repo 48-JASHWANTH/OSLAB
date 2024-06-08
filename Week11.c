@@ -1,8 +1,5 @@
 #include <stdio.h>
-#include <stdlib.h>
-
 int np, nr, alloc[100][100], need[100][100], avail[100], total[100][100];
-
 void takeInput() {
     printf("Enter no. of processes: ");
     scanf("%d", &np);
@@ -49,23 +46,19 @@ void printTable() {
     }
 }
 
-int checkStatus(int status[]) {
-    int cnt = 0;
-    for (int i = 0; i < np; i++)
-        if (!status[i])
-            cnt++;
-    return cnt;
-}
-
-void banker() {
+int banker() {
     int status[100] = {0}, flag, cnt = 0, prev = np;
+    int tempAvail[100];
+    for (int i = 0; i < nr; i++) {
+        tempAvail[i] = avail[i];
+    }
     do {
         flag = 0;
         for (int i = 0; i < np; i++) {
             if (!status[i]) {
                 int safe = 1;
                 for (int j = 0; j < nr; j++) {
-                    if (avail[j] < need[i][j]) {
+                    if (tempAvail[j] < need[i][j]) {
                         safe = 0;
                         break;
                     }
@@ -74,7 +67,7 @@ void banker() {
                     flag = 1;
                     status[i] = 1;
                     for (int j = 0; j < nr; j++)
-                        avail[j] += alloc[i][j];
+                        tempAvail[j] += alloc[i][j];
                     cnt++;
                 }
             }
@@ -83,46 +76,115 @@ void banker() {
 
     if (cnt == np) {
         printf("Safe sequence exists.\n");
+        return 1;
     } else {
         printf("Unsafe state detected.\n");
+        return 0;
     }
 }
 
 void deadlockDetection() {
-    int marked[100] = {0};
-    for (int i = 0; i < np; i++) {
-        if (!marked[i]) {
-            int deadlock = 1;
-            for (int j = 0; j < nr; j++) {
-                if (need[i][j] > avail[j]) {
-                    deadlock = 0;
+    int work[100], finish[100] = {0}, i, j;
+    for (i = 0; i < nr; i++) {
+        work[i] = avail[i];
+    }
+    
+    int deadlockProcesses[100], deadlockCount = 0;
+
+    for (i = 0; i < np; i++) {
+        int canFinish = 0;
+        if (!finish[i]) {
+            for (j = 0; j < nr; j++) {
+                if (need[i][j] > work[j]) {
+                    canFinish = 0;
                     break;
+                } else {
+                    canFinish = 1;
                 }
             }
-            if (deadlock) {
-                printf("Process P%d is in deadlock.\n", i);
-                marked[i] = 1;
+            if (canFinish) {
+                for (j = 0; j < nr; j++) {
+                    work[j] += alloc[i][j];
+                }
+                finish[i] = 1;
+                i = -1; 
             }
+        }
+    }
+
+    for (i = 0; i < np; i++) {
+        if (!finish[i]) {
+            deadlockProcesses[deadlockCount++] = i;
+        }
+    }
+
+    if (deadlockCount > 0) {
+        printf("Processes involved in the deadlock cycle: ");
+        for (i = 0; i < deadlockCount; i++) {
+            printf("P%d ", deadlockProcesses[i]);
+        }
+        printf("\n");
+    } else {
+        printf("No deadlock detected.\n");
+    }
+}
+
+void handleExtraRequest() {
+    int process, extraRequest[100];
+    printf("Enter the process number for the extra request: ");
+    scanf("%d", &process);
+    printf("Enter the additional request for each resource:\n");
+    for (int i = 0; i < nr; i++) {
+        printf("Resource %c: ", 'A' + i);
+        scanf("%d", &extraRequest[i]);
+    }
+
+   
+    int canGrant = 1;
+    
+
+    if (!canGrant) {
+        printf("The request cannot be granted.\n");
+        return;
+    }
+
+    
+    for (int i = 0; i < nr; i++) {
+        need[process][i] += extraRequest[i];
+        alloc[process][i] -= extraRequest[i];
+    }
+
+    
+    if (banker()) {
+        printf("The request can be granted. Checking for deadlock...\n");
+        deadlockDetection();
+    } else {
+        printf("The request cannot be granted as it leads to an unsafe state.\n");
+        // Revert the need matrix and available resources
+        deadlockDetection();
+        for (int i = 0; i < nr; i++) {
+            need[process][i] -= extraRequest[i];
+            alloc[process][i] += extraRequest[i];
         }
     }
 }
 
 int main() {
-    int choice;
     takeInput();
     printTable();
-    do {
-        printf("Select 1.Banker's algorithm 2.Deadlock detection 3.Exit: ");
-        scanf("%d", &choice);
-        switch (choice) {
-            case 1:
-                banker();
-                break;
-            case 2:
-                deadlockDetection();
-                break;
-            default:
-                exit(0);
-        }
-    } while (1);
+
+    // Check initial safety
+    if (!banker()) {
+        printf("Initial state is unsafe. Exiting.\n");
+        return 0;
+    }
+int y=1;
+    // Loop to handle extra requests and check for deadlocks
+    while(y==1) {
+        handleExtraRequest();
+       printf("want to continue 1/0");
+       scanf("%d",&y);
+    }
+
+    return 0;
 }
