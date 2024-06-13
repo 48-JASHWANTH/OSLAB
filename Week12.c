@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <limits.h>
 
 void print_slots(int slots[], int slotSize) {
     for (int i = 0; i < slotSize; i++) {
@@ -119,39 +120,41 @@ int LRU(int pages[], int n, int slots[], int slotSize) {
     return page_faults;
 }
 
-int LFU(int pages[], int n, int slots[], int slotSize) {
-    int page_faults = 0;
-    int count[slotSize]; 
-    int time[slotSize];
-    
-    for (int i = 0; i < slotSize; i++) {
-        count[i] = 0;
-        time[i] = -1;
+int search(int r, int fa, int p[]) { 
+    for (int i = 0; i < fa; i++) { 
+        if (p[i] == r) { 
+            return i; 
+        } 
+    } 
+    return -1; 
+} 
+
+int LFU(int pages[],int n,int slots[],int slotSize){
+    int page_faults = 0,insertOrder[slotSize],freq[slotSize],insertCounter = 0;
+
+    for(int i=0;i<slotSize;i++){
+        freq[i] = 0;
+        insertOrder[i] = -1;
     }
 
-    for (int i = 0; i < n; i++) {
-        int page = pages[i];
-        bool found = false;
-        int lfu_idx = 0;
-
-        for (int j = 0; j < slotSize; j++) {
-            if (slots[j] == page) {
-                found = true;
-                count[j]++;
-                time[j] = i;
-                break;
+    for(int i=0;i<n;i++){
+        int index = search(pages[i],slotSize,slots);
+        if(index != -1){
+            freq[index]++;
+        }else { 
+            int minIndex = 0; 
+            for (int j = 1; j < slotSize; j++) { 
+                if (freq[j] < freq[minIndex]) { 
+                    minIndex = j; 
+                } else if (freq[j] == freq[minIndex] && insertOrder[j] < insertOrder[minIndex]) { 
+                    minIndex = j; 
+                } 
             }
-            if (count[j] < count[lfu_idx] || (count[j] == count[lfu_idx] && time[j] < time[lfu_idx])) {
-                lfu_idx = j;
-            }
-        }
-
-        if (!found) {
-            slots[lfu_idx] = page;
-            count[lfu_idx] = 1;
-            time[lfu_idx] = i;
-            print_slots(slots, slotSize);
+            slots[minIndex] = pages[i];
+            freq[minIndex] = 1;
+            insertOrder[minIndex] = insertCounter++;
             page_faults++;
+            print_slots(slots,slotSize);
         }
     }
     return page_faults;
@@ -182,22 +185,27 @@ int main() {
         int ans;
         switch (choice) {
             case 1:
+                printf("Slots:\n");
                 ans = FIFO(pages, n, slots, slotSize);
                 printf("Total no.of page faults = %d\n", ans);
                 break;
             case 2:
+                printf("Slots:\n");
                 ans = Optimal(pages, n, slots, slotSize);
                 printf("Total no.of page faults = %d\n", ans);
                 break;
             case 3:
+                printf("Slots:\n");
                 ans = LRU(pages, n, slots, slotSize);
                 printf("Total no.of page faults = %d\n", ans);
                 break;
             case 4:
+                printf("Slots:\n");
                 ans = LFU(pages, n, slots, slotSize);
                 printf("Total no.of page faults = %d\n", ans);
                 break;
             case 5:
+            printf("Done...");
                 return 0;
         }
         printf("Do you want to continue (1/0): ");
