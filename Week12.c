@@ -211,6 +211,5 @@ int main() {
         printf("Do you want to continue (1/0): ");
         scanf("%d", &ch);
     } while (ch == 1);
-
     return 0;
 }
