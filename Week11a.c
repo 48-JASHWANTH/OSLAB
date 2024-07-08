@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 int main() {
-    int n, m, k, y, alloc[20][20], max[20][20], avail[50], ind = 0; 
+    int n, m, alloc[20][20], max[20][20], avail[50]; 
     
     printf("Enter the number of Processes: ");
     scanf("%d", &n);
@@ -28,36 +28,37 @@ int main() {
         scanf("%d", &avail[i]);
     }
     
-    int finish[n], safesequence[n], work[m], need[n][m];
+    int need[n][m], finish[n], safesequence[n], work[m],ind = 0;
     
     // Calculating NEED matrix
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < m; j++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
             need[i][j] = max[i][j] - alloc[i][j];
         }
     }
     
     printf("NEED matrix is:\n");
-    for (i = 0; i < n; i++) {
-        for (j = 0; j < m; j++) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < m; j++) {
             printf(" %d ", need[i][j]);
         }
         printf("\n");
     }
     
-    for (i = 0; i < m; i++) {
+
+    for (int i = 0; i < m; i++) {
         work[i] = avail[i];
     }
     
-    for (i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++) {
         finish[i] = 0;
     }
     
-    for (k = 0; k < n; k++) {
-        for (i = 0; i < n; i++) {
+    for (int k = 0; k < n; k++) {
+        for (int i = 0; i < n; i++) {
             if (finish[i] == 0) {
                 int flag = 0;
-                for (j = 0; j < m; j++) {
+                for (int j = 0; j < m; j++) {
                     if (need[i][j] > work[j]) {
                         flag = 1;
                         break;
@@ -65,7 +66,7 @@ int main() {
                 }
                 if (flag == 0) {
                     safesequence[ind++] = i;
-                    for (y = 0; y < m; y++) {
+                    for (int y = 0; y < m; y++) {
                         work[y] += alloc[i][y];
                     }
                     finish[i] = 1;
@@ -74,9 +75,22 @@ int main() {
         }
     }
     
-    printf("\nFollowing is the SAFE Sequence:\n");
-    for (i = 0; i < n; i++) {
-        printf(" P%d ", safesequence[i]);
+    // Check if all processes are finished
+    int safe = 1;
+    for (int i = 0; i < n; i++) {
+        if (finish[i] == 0) {
+            safe = 0;
+            break;
+        }
+    }
+    
+    if (safe) {
+        printf("\nFollowing is the SAFE Sequence:\n");
+        for (int i = 0; i < n; i++) {
+            printf(" P%d ", safesequence[i]);
+        }
+    } else {
+        printf("\nThe system is in an UNSAFE state.\n");
     }
     
     return 0;
