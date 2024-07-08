@@ -9,11 +9,8 @@ struct map {
     int start;
     int all[100];
 };
-
 struct map b1[100];
 int k=0;
-int w=0;
-int link[100];
 
 struct map1 {
     int filename;
@@ -21,10 +18,10 @@ struct map1 {
     int req;
     int start;
 };
-
 struct map1 b2[100];
+int w=0;
+int link[100];
 
-int a3[100][100];
 
 struct map3 {
     int filename;
@@ -32,14 +29,12 @@ struct map3 {
     int req;
     int index;
 };
-
 struct map3 b3[100];
 int z=0;
+int a3[100][100];
 
 void indexall(int ms,int ds){
-    int n,j,p,x;
-    int c;
-
+    int c,n,j,p,x;
     printf("enter filename:");
     scanf("%d",&c);
     b3[z].filename=c;
@@ -56,7 +51,7 @@ void indexall(int ms,int ds){
     printf("enter index block:");
     scanf("%d",&x);
     b3[z].index=x;
-    printf("enter %d values:",j);
+    printf("enter %d req values:",j);
 
     for(int i=0;i<j;i++){
         scanf("%d",&p);
@@ -68,7 +63,7 @@ void indexall(int ms,int ds){
     printf("%d\t\t%d\t\t%d\t\t%d\t\t",b3[z].filename,b3[z].size,b3[z].req,b3[z].index);
     x=b3[z].index;
 
-    for(int i=0;i<b3[z].req-1;i++){
+    for(int i=0;i<j-1;i++){
         printf("%d->",a3[x][i]);
     }
     z++;
@@ -111,8 +106,7 @@ void indexds(int ms,int ds){
 }
 
 void linall(int ms,int ds){
-    int n,i,j,past;
-    int c;
+    int c,n,j,past;
     printf("enter filename:");
     scanf("%d",&c);
     b2[w].filename=c;
@@ -127,7 +121,7 @@ void linall(int ms,int ds){
         j=(n/(ds-1))+1;
 
     b2[w].req=j;
-    printf("enter %d values:",j);
+    printf("enter %d required values:",j);
 
     for(int i=0;i<j;i++){
         if(i==0){
@@ -192,8 +186,7 @@ void linds(int ms,int ds){
 }
 
 void seqall(int ms,int ds) {
-    int n,i,j,p;
-    int c;
+    int c,n,p,i,j;
     int a[ms/ds];
     printf("enter filename:");
     scanf("%d",&c);

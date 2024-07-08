@@ -9,7 +9,7 @@ int i = 0, l = 0, m = 0;
 int search(char f[]) {
     for (int j = 0; j < i; j++) {
         if (strcmp(a[j], f) == 0) {
-            return (j);
+            return j;
         }
     }
     return (-1);
@@ -91,11 +91,11 @@ int searchuf(char user[], char p[]) {
 }
 
 void createuf(char user[], char p[]) {
-    if (searchuser(user) == -1) {
+    int k = searchuser(user);
+    if (k == -1) {
         printf("invalid");
     } else {
         if (searchuf(user, p) == -1) {
-            int k = searchuser(user);
             strcpy(f[k][m], p);
             m++;
         } else
@@ -130,11 +130,11 @@ void sld(void) {
     char s[100], s2[100];
     while (y) {
         int x;
-        printf("enter 1:create 2: traverse 3: search 4:delet 5:rename 6:exit");
+        printf("enter 1:create 2: traverse 3: search 4:delete 5:rename 6:exit");
         scanf("%d", &x);
         switch (x) {
             case 1:
-                printf("enter file");
+                printf("enter file:");
                 scanf("%s", &s);
                 createfile(s);
                 break;
@@ -142,7 +142,7 @@ void sld(void) {
                 traverse();
                 break;
             case 3:
-                printf("enter file");
+                printf("enter file: ");
                 scanf("%s", &s);
                 if (search(s) == -1)
                     printf("false");
@@ -150,7 +150,7 @@ void sld(void) {
                     printf("true");
                 break;
             case 4:
-                printf("enter file");
+                printf("enter file:");
                 scanf("%s", &s);
                 delet(s);
                 break;
@@ -169,7 +169,7 @@ void sld(void) {
 
 void tld(void) {
     int y;
-    char s[100], s2[100], s1[100];
+    char s[100], s1[100], s2[100];
     while (y) {
         int x;
         printf("enter 1:createu 2: traverseu 3: searchu 4:deletu 5:renameu 6:createuf 7:searchuf 8: traverseuf 9:deletuf 10:renamuf");

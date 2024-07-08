@@ -26,7 +26,7 @@ int FIFO(int pages[], int n, int slots[], int slotSize) {
             }
         }
 
-        if (!found) {
+        if (found == false) {
             slots[cur_idx] = page;
             cur_idx = (cur_idx + 1) % slotSize;
             print_slots(slots, slotSize);
@@ -49,7 +49,7 @@ int Optimal(int pages[], int n, int slots[], int slotSize) {
             }
         }
 
-        if (!found) {
+        if (found == false) {
             if (i < slotSize) {
                 slots[i] = page;
             } else {
@@ -88,7 +88,7 @@ int Optimal(int pages[], int n, int slots[], int slotSize) {
 
 int LRU(int pages[], int n, int slots[], int slotSize) {
     int page_faults = 0;
-    int time[slotSize]; 
+    int time[slotSize];
 
     for (int i = 0; i < slotSize; i++) {
         time[i] = -1;
@@ -110,7 +110,7 @@ int LRU(int pages[], int n, int slots[], int slotSize) {
             }
         }
 
-        if (!found) {
+        if (found == false) {
             slots[lru_idx] = page;
             time[lru_idx] = i;
             print_slots(slots, slotSize);

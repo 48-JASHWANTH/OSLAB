@@ -47,7 +47,7 @@ void printTable() {
 }
 
 int banker() {
-    int status[100] = {0}, flag, cnt = 0, prev = np;
+    int status[100] = {0}, flag, cnt = 0;
     int tempAvail[100];
     for (int i = 0; i < nr; i++) {
         tempAvail[i] = avail[i];

@@ -40,7 +40,7 @@ void sstf(int arr[]){
         sum += abs(presPos - arr[index]);
         presPos = arr[index];
         temp[arr[index]] = -1;
-        }
+    }
     printf("Total no.of head movements = %d\n",sum);
 }
 
